@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 
+import { TODO_LIST_ABI, TODO_LIST_ADDRESS } from './config';
+
 import './App.css';
 
 class App extends Component {
@@ -8,7 +10,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      account: ''
+      account: '',
+      taskCount: 0
     }
   }
 
@@ -21,6 +24,13 @@ class App extends Component {
     this.setState({
       account: accounts[0]
     })
+
+    const todoList = new web3.eth.Contract(TODO_LIST_ABI, TODO_LIST_ADDRESS)
+    this.setState({ todoList })
+    console.log("todoList", todoList)
+
+    const taskCount = await todoList.methods.taskCount().call()
+    this.setState({ taskCount })
   }
 
   componentDidMount() {
@@ -29,11 +39,12 @@ class App extends Component {
 
 
   render() {
-    const { account } = this.state;
+    const { account, taskCount } = this.state;
     return (
       <div className="App">
-        <h1>Hello</h1>
+        <h1>TODO LIST</h1>
         <p>Your account: {account}</p>
+        <p>Your task count: {taskCount}</p>
       </div>
     );
   }
